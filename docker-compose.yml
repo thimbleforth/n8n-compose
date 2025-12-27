@@ -1,0 +1,26 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik:/etc/traefik:ro
+      - ./certs:/certs:ro
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    environment:
+      - N8N_HOST=n8n.local.test
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://n8n.local.test/
+      - NODE_ENV=production
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./local-files:/files
+
+volumes:
+  n8n_data:
